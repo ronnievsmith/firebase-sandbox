@@ -1,26 +1,30 @@
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+# [Firebase Sandbox](http://rack.pub/firebase-sandbox)
+### Synopsis
 
+A web application enabling developers to trigger Firebase v3 methods from a graphical user interface (GUI) for learning and testing purposes. Currently, database write methods are supported. Check back soon for more features and methods support.
 
-Hi there! Welcome to Cloud9 IDE!
+> This web application is a front-end only. You will be interacting with **your** Firebase database on the back end. 
 
-To get you started, we included a small hello world application.
+### Code Example
 
-1) Open the hello-world.html file
+https://rack.pub/firebase-sandbox
 
-2) Click on the Preview button to open a live preview pane
+<img src="https://github.com/rhroyston/rhroyston.github.io/blob/master/firebase-sandbox.jpg" alt="screenshot">
 
-3) Make some changes to the file, save, watch the preview, and have fun!
+### Motivation
 
-Happy coding!
-The Cloud9 IDE team
+This web application allows developers to easily perform and see the effects of Firebase v3 methods.
 
+### Installation
 
-## Support & Documentation
+1. Navigate to https://rack.pub/firebase-sandbox
+2. Enter your Firebase config parameters by clicking the Firebase Configuration buttons
+3. Press the buttons and enjoy yourself
 
-Visit http://docs.c9.io for documentation, or http://support.c9.io for support.
-To watch some training videos, visit http://www.youtube.com/user/c9ide
+### Contribute
+
+If you found a bug, have any questions or want to contribute please let me know, [ron@rack.pub](mailto:ron@rack.pub).
+
+### License
+
+Ron Royston, [https://rack.pub](https://rack.pub), [MIT License](https://en.wikipedia.org/wiki/MIT_License)
