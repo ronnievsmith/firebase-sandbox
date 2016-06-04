@@ -1,20 +1,33 @@
 /*
-fire.js v0.1 - Simple datetime add-on tools for JavaScript
+firebase-sandbox version.06-2016 - Firebase v3 methods from a graphical user interface (GUI) for learning and testing purposes.
 Created by Ron Royston, https://rack.pub
-https://github.com/rhroyston/fire-js
+https://github.com/rhroyston/firebase-sandbox
 License: MIT
 
 fire.push(args)
 fire.update(args)
 fire.set(targs)
 fire.transaction(args)
+args = {path:path,child:child,key:key,val:val}
 fire.toast(msg)
 */
 
-// slick pure javascript implementation of jQuery.ready, function r at end of code.  This ensures MDL toast works for error alerting
+// fires when doc ready
 r(function(){
-    //are we configured or not and if not grey out buttons and don't reference firebase.database()
-    if(fireConfig.isConfigured){
+    //step 1 load the config from session or storage?  session takes precedence
+    if (fireConfig.sessionStorageConfig()){
+        fire.loadToMemory(fireConfig.sessionApiKey, fireConfig.sessionAuthDomain, fireConfig.sessionDatabaseURL, fireConfig.sessionStorageBucket);
+        fireConfig.configured = true;
+    } else if (fireConfig.localStorageConfig()){
+        fire.loadToMemory(fireConfig.storedApiKey, fireConfig.storedAuthDomain, fireConfig.storedDatabaseURL, fireConfig.storedStorageBucket);
+        fireConfig.configured = true;
+    }
+        
+    //if firebase config in memory                            
+    if(fireConfig.configured){
+        // display config data on card
+        fire.displayConfig();
+        
         // Attempt to Initialize Firebase
         try{
             firebase.initializeApp(fireConfig.config);
@@ -23,6 +36,7 @@ r(function(){
             fireConfig.initialized = false;
             fire.toast('Firebase Failed to Initialize: ' + e,null,5000);
         }
+        
         // Attempt to Get a reference to the database service
         try{
             fire.database = firebase.database();
@@ -31,27 +45,43 @@ r(function(){
             fireConfig.initialized = false;
             fire.toast(e,null,5000);
         }
+    } else {
+        //don't enable buttons and bring attention to configure button
+        fire.settingsIcon.classList.add('spin');
     }
-    fire.actionEnabler();
+    
+    if(fireConfig.initialized){
+        fire.buttonEnabler();
+    }
     
     //Capture errors and send to toast
     window.onerror = function (msg, url, lineNo, columnNo, error) {
         var string = msg.toLowerCase();
         var substring = "script error";
+        
+        var test = 'Your API key is invalid'.toLowerCase();
+        if (string.indexOf(test) > -1){
+            //fire.toast('Script Error: See Browser Console for Detail',null,4000);
+            //disable action buttons
+            setTimeout(function(){
+                fire.buttonDisabler();
+            }, 1000);
+        }
+        
         if (string.indexOf(substring) > -1){
             fire.toast('Script Error: See Browser Console for Detail',null,4000);
+            console.log(msg, url, lineNo, columnNo, error);
         } else {
             fire.toast(msg,null,4000);
+            console.log(msg, url, lineNo, columnNo, error);
         }
       return false;
     };
 });
 
-
 //Revealing Module Pattern (Public & Private) w Public Namespace 'fire'
 var fire = (function() {
-
-    // object to expose as public properties and methods such as clock.now
+    // object to expose as public properties and methods
     var pub = {};
     //firebase config
     var config = {};
@@ -64,10 +94,10 @@ var fire = (function() {
     var apiKeySpan = doc.getElementById('api-key-span');
     var authDomainSpan = doc.getElementById('auth-domain-span');
     var databaseUrlSpan = doc.getElementById('database-url-span');
-    var buttonPush = doc.getElementById('button-push');
-    var buttonUpdate = doc.getElementById('button-update');
-    var buttonSet = doc.getElementById('button-set');
-    var buttonTransaction = doc.getElementById('button-transaction');
+    pub.buttonPush = doc.getElementById('button-push');
+    pub.buttonUpdate = doc.getElementById('button-update');
+    pub.buttonSet = doc.getElementById('button-set');
+    pub.buttonTransaction = doc.getElementById('button-transaction');
     var pathInput = doc.getElementById('path-input');
     var childInput = doc.getElementById('child-input');
     var keyInput = doc.getElementById('key-input');
@@ -77,23 +107,18 @@ var fire = (function() {
     var rackButton = doc.getElementById('rack');
     var licenseButton = doc.getElementById('license');
     var configureButton = doc.getElementById('configure');
-    
+    pub.settingsIcon = doc.getElementById('settings-icon');
     
     var dialogConfig = doc.getElementById('dialog-config');
     var dialogConfigTopIcon = doc.getElementById('dialog-config-top-icon');
-    //dialog-config-content
-    
     var dialogConfigProcessing = doc.getElementById('dialog-config-processing');
     var dialogConfigBody = doc.getElementById('dialog-config-body');
     var dialogConfigActions = doc.getElementById('dialog-config-actions');
-    
-    
     var dialogConfigClose = doc.getElementById('dialog-config-close');
-
-
+    var dialogConfigButtonCommit = doc.getElementById('dialog-config-button-commit');
     var dialogConfigStoreCheckbox = doc.getElementById('dialog-config-store-checkbox');
+    var dialogConfigRemember = true;
     
-    //new ones
     var dialogHelp = doc.getElementById('dialog-help');
     var dialogHelpTitle = doc.getElementById('dialog-help-title');
     var dialogConfigTitle = doc.getElementById('dialog-config-title');
@@ -103,36 +128,44 @@ var fire = (function() {
     var dialogHelpActions = doc.getElementById('dialog-help-actions');
     var dialogHelpClose = doc.getElementById('dialog-help-close');
     
-
     var mainHelp = doc.getElementById('main-help');
     var fork = doc.getElementById('fork');
-
-    var dialogConfigButtonCommit = doc.getElementById('dialog-config-button-commit');
+    
     var apiKeyInput = doc.getElementById('apiKey-input');
     var authDomainInput = doc.getElementById('authDomain-input');
     var databaseURLInput = doc.getElementById('databaseURL-input');
     var storageBucketInput = doc.getElementById('storageBucket-input');
     
+    var iframes = document.getElementsByTagName('iframe');
 
-    
-    
-
-    // Get a reference to the database service
+    // initialize object to reference to the database service
     pub.database;
         
     //make the buttons work
     attachListeners();
 
-    // display config data on card
-    displayFirebaseConfigData();
     
-    pub.actionEnabler = function(){
+    pub.iframeKiller = function(){
+        for (var i = 0; i < iframes.length; i++) {
+            iframes[i].location='';
+        }
+    };
+    
+    pub.buttonDisabler = function(){
+        pub.buttonPush.setAttribute("disabled","disabled");
+        pub.buttonUpdate.setAttribute("disabled","disabled");
+        pub.buttonSet.setAttribute("disabled","disabled");
+        pub.buttonTransaction.setAttribute("disabled","disabled");
+        
+    };
+    
+    pub.buttonEnabler = function(){
         if(fireConfig.initialized){
             //enable action buttons
-            buttonPush.disabled = false;
-            buttonUpdate.disabled = false;
-            buttonSet.disabled = false;
-            buttonTransaction.disabled = false;
+            pub.buttonPush.disabled = false;
+            pub.buttonUpdate.disabled = false;
+            pub.buttonSet.disabled = false;
+            pub.buttonTransaction.disabled = false;
         }        
     }
 
@@ -161,6 +194,7 @@ var fire = (function() {
     };
     
     function attachListeners(){
+        
         for (var i = 0, len = actionButtons.length; i < len; i++) {
             actionButtons[i].addEventListener("click", function(e){
                 switch (this.id) {
@@ -179,21 +213,41 @@ var fire = (function() {
                 }
             });
         }
+        
         rackButton.addEventListener("click", function(e){
             window.location = "https://rack.pub";
         });
+        
         licenseButton.addEventListener("click", function(e){
             window.location = "https://tldrlegal.com/license/mit-license";
         });
+        
+        dialogConfigStoreCheckbox.addEventListener("click", function(e){
+            if (dialogConfigStoreCheckbox.checked){
+                dialogConfigRemember = true;
+            } else {
+                dialogConfigRemember = false;
+            }
+            
+        });
+        
         dialogConfigClose.addEventListener("click", function(){
             dialogConfig.close();
         });
+        
         dialogHelpClose.addEventListener("click", function(){
             dialogHelp.close();
+            // remove id fragment from URL and slice off the remaining hash in HTML5
+            window.location.replace("#");
+            if (typeof window.history.replaceState == 'function') {
+              history.replaceState({}, '', window.location.href.slice(0, -1));
+            }
         });
+        
         dialogHelpTopIcon.addEventListener("click", function(){
             dialogHelp.close();
-        });        
+        });
+        
         mainHelp.addEventListener("click", function(){
             if (!mainHelp.showModal) {
                 dialogPolyfill.registerDialog(dialogHelp);
@@ -202,7 +256,7 @@ var fire = (function() {
             doc.activeElement.blur();
         });
         fork.addEventListener("click", function(){
-            alert('fork clicked');
+            window.location="https://github.com/rhroyston/firebase-sandbox";
         });
         
         configureButton.addEventListener("click", function(){
@@ -210,12 +264,24 @@ var fire = (function() {
                 dialogPolyfill.registerDialog(dialogConfig);
             }
             dialogConfig.showModal();
-            //try and hide
-            //need to populate the inputs if the data is there
-            if(fireConfig.apiKey){apiKeyInput.value = fireConfig.apiKey;}
-            if(fireConfig.authDomain){authDomainInput.value = fireConfig.authDomain;}
-            if(fireConfig.databaseURL){databaseURLInput.value = fireConfig.databaseURL;}
-            if(fireConfig.storageBucket){storageBucketInput.value = fireConfig.storageBucket;}
+
+            if(!(typeof(componentHandler) == 'undefined')){
+                componentHandler.upgradeAllRegistered();
+            }
+        
+            //populate inputs if we have the config data in memory
+            if(fireConfig.configured){
+                apiKeyInput.value = fireConfig.config.apiKey;
+                authDomainInput.value = fireConfig.config.authDomain;
+                databaseURLInput.value = fireConfig.config.databaseURL;
+                storageBucketInput.value = fireConfig.config.storageBucket;
+            }
+            
+            // FOR NOW WE ENABLE COMMIT BUTTON BUT WANT TO ADD AUTO ENABLE ON DETECT ALL INPUTS FILLED
+            dialogConfigButtonCommit.disabled = false;
+            dialogConfigClose.disabled = false;
+            dialogConfigStoreCheckbox.disabled = false;
+            
             //MDL Bug Fix
             var dialogInputs = doc.querySelectorAll('.dialog-inputs');
             for (var i = 0, l = dialogInputs.length; i < l; i++) {
@@ -224,14 +290,75 @@ var fire = (function() {
             //focus on input no 1
             apiKeyInput.focus();
         });
-
         dialogConfigButtonCommit.addEventListener("click", function(){
-            //on close
-            //if all fields are filled 
             runEntry(endEntry);
         });
     }
-
+    
+    pub.loadToStorage = function(api,auth,db,st){
+        //If browser storage not available tell user <-- ONLY NEEDED IF REMEMBER CHECKED
+        if (typeof(Storage) == "undefined"){
+            pub.toast('Browser storage not supported. Cannot remember config',null,4000);
+            return false;
+        } else {
+            //LOAD TO STORAGE
+            try{
+                localStorage.setItem("firebaseSandboxApiKey",api);
+                localStorage.setItem("firebaseSandboxAuthDomain",auth);
+                localStorage.setItem("firebaseSandboxDatabaseURL",db);
+                localStorage.setItem("firebaseSandboxStorageBucket",st);
+                return true;
+            } catch (e) {
+                pub.toast(JSON.stringify(e),null,4000);
+                return false;
+            }        
+        }
+    }
+    pub.loadToSession = function(api,auth,db,st){
+        //If browser session storage not available tell user
+        if (typeof(Storage) == "undefined"){
+            pub.toast('Browser session storage not supported',null,4000);
+            return false;
+        } else {
+            //LOAD TO SESSION
+            try{
+                sessionStorage.setItem("firebaseSandboxApiKey",api);
+                sessionStorage.setItem("firebaseSandboxAuthDomain",auth);
+                sessionStorage.setItem("firebaseSandboxDatabaseURL",db);
+                sessionStorage.setItem("firebaseSandboxStorageBucket",st);
+                return true;
+            } catch (e) {
+                pub.toast(JSON.stringify(e),null,4000);
+                return false;
+            }        
+        }
+    };
+    pub.loadToMemory = function(api,auth,db,st){
+        //LOAD to MEMORY
+        try{
+        	fireConfig.config.apiKey = api;
+        	fireConfig.config.authDomain = auth;
+        	fireConfig.config.databaseURL = db;
+        	fireConfig.config.storageBucket = st;
+            return true;
+        } catch (e) {
+            pub.toast(JSON.stringify(e),null,4000);
+            return false;
+        }
+    };
+    pub.removeConfigFromStorage = function(){
+        try{
+            localStorage.removeItem("firebaseSandboxApiKey");
+            localStorage.removeItem("firebaseSandboxAuthDomain");
+            localStorage.removeItem("firebaseSandboxDatabaseURL");
+            localStorage.removeItem("firebaseSandboxStorageBucket");
+            pub.toast('Config Removed from Storage',null,4000);
+            return true;
+        } catch (e) {
+            pub.toast(JSON.stringify(e),null,4000);
+            return false;
+        }
+    };
     function runEntry(callback) {
         //check if all inputs have values and if not toast which one does not then exit
         if(!apiKeyInput.value){pub.toast('API Key Required',null,4000);return;}
@@ -248,58 +375,71 @@ var fire = (function() {
         //clear dialog and show spinner while processing
         dialogConfigBody.classList.add('hide');
         dialogConfigProcessing.classList.remove('hide');
-        //componentHandler.upgradeAllRegistered();
         
         dialogConfigButtonCommit.disabled = true;
         dialogConfigClose.disabled = true;
         dialogHelp.disabled = true;
         dialogConfigStoreCheckbox.disabled = true;
-        //window.componentHandler.upgradeAllRegistered();
-
-        //Store the input
-        if (typeof(Storage) !== "undefined") {
-            // Store
-            localStorage.setItem("apiKey",api);
-            localStorage.setItem("authDomain",auth);
-            localStorage.setItem("databaseURL",db);
-            localStorage.setItem("storageBucket",st);
+        
+        //load config to memory in any case
+        pub.loadToMemory(api,auth,db,st);
+            
+        //REMEMBER ME CHECKED
+        if(dialogConfigStoreCheckbox.checked){
+            //save to local storage and session storage
+            pub.loadToStorage(api,auth,db,st);
+            pub.loadToSession(api,auth,db,st);
+        // REMEMBER ME NOT CHECKED
         } else {
-            pub.toast('Remember Data Operation Failed: No Web Storage support.',null,4000);
+
+            pub.removeConfigFromStorage();
+            pub.loadToSession(api,auth,db,st);
+
         }
 
-        //initialize the firebase config to memory
-        fireConfig.initConfig(api,auth,db,st);
-            
-        // Call the end Entry callback
-        callback();
+        try{
+            firebase.app().delete().then(function() {
+                pub.iframeKiller();
+                callback();
+            });
+        }catch (e){
+            callback();
+        }
+
     }
 
-function endEntry() {
-    dialogConfigButtonCommit.disabled = false;
-    dialogConfigClose.disabled = false;
-    dialogHelp.disabled = false;
-    dialogConfigStoreCheckbox.disabled = false;  
-    
-    //clear spinner
-    dialogConfigProcessing.classList.add('hide');
-    dialogConfigBody.classList.remove('hide');
-    
-    // display config data on card
-    displayFirebaseConfigData(); 
-    try{
-        // Initialize Firebase
-        //firebase.initializeApp(fireConfig.config); ****************** can't reinit?
-        // Get a reference to the database service
-        //var database = firebase.database();
-        //all goo so close out dialog and stuff
-        dialog.close();
-        fireConfig.initialized = true;
-        pub.actionEnabler();
-    } catch (e){
-        pub.toast('Firebase Initialization Failed' + e,null,4000);
+    function endEntry() {
+        pub.displayConfig();
+        try{
+            firebase.initializeApp(fireConfig.config);
+            fireConfig.initialized = true;
+        } catch (e) {
+            pub.toast(e,null,10000);
+            fireConfig.initialized = false;
+        }
+        
+        try{
+            pub.database = firebase.database();
+            fireConfig.initialized = true;
+        } catch (e) {
+            pub.toast(e,null,10000);
+            fireConfig.initialized = false;
+        }
+
+        dialogConfigButtonCommit.disabled = false;
+        dialogConfigClose.disabled = false;
+        dialogHelp.disabled = false;
+        dialogConfigStoreCheckbox.disabled = false;  
+        
+        //clear spinner
+        dialogConfigProcessing.classList.add('hide');
+        dialogConfigBody.classList.remove('hide');
+        
+        pub.buttonEnabler();
+        
+        //try to close out dialog
+        dialogConfig.close();
     }
-    location.reload();
-}
 
     //fire.push(args)
     pub.push = function(args) {
@@ -371,8 +511,8 @@ function endEntry() {
             pub.toast('Success');
         }
     };
-
-    function displayFirebaseConfigData(){
+    
+    pub.displayConfig = function(){
         var msg = '<span class="mdl-color-text--red-600">config not found!</span>';
         if(fireConfig.config.apiKey){
             apiKeySpan.innerHTML = fireConfig.config.apiKey.toString();
@@ -419,11 +559,9 @@ function endEntry() {
         }, timer * count);
     }
 
-
     //API
     return pub;
 }());
-
 
 function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
 
