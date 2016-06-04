@@ -18,7 +18,7 @@ This web application allows developers to easily perform and see the effects of 
 ### Installation
 
 1. Navigate to https://rack.pub/firebase-sandbox
-2. Enter your Firebase config parameters by clicking the Firebase Configuration buttons
+2. Enter your Firebase config parameters by clicking the Firebase Configuration button
 3. Press the buttons and enjoy yourself
 
 > :exclamation: If you fork or host this code yourself you should load firebase.js from _your_ server as CDN hosted scripts do not allow proper error reporting to JavaScript. See [Mozilla Developer Network GlobalEventHandlers.onerror](https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror#Notes)
