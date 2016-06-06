@@ -68,6 +68,12 @@ r(function(){
             }, 1000);
         }
         
+        var oAutoError = 'not authorized for OAuth operations'.toLowerCase();
+        if (string.indexOf(oAutoError) > -1){
+            //do not toast this error
+            return
+        }
+        
         if (string.indexOf(substring) > -1){
             fire.toast('Script Error: See Browser Console for Detail',null,4000);
             console.log(msg, url, lineNo, columnNo, error);
