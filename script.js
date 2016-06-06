@@ -391,10 +391,8 @@ var fire = (function() {
             pub.loadToSession(api,auth,db,st);
         // REMEMBER ME NOT CHECKED
         } else {
-
             pub.removeConfigFromStorage();
             pub.loadToSession(api,auth,db,st);
-
         }
 
         try{
@@ -405,7 +403,6 @@ var fire = (function() {
         }catch (e){
             callback();
         }
-
     }
 
     function endEntry() {
