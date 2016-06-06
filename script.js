@@ -218,9 +218,9 @@ var fire = (function() {
             window.location = "https://rack.pub";
         });
         
-        licenseButton.addEventListener("click", function(e){
-            window.location = "https://tldrlegal.com/license/mit-license";
-        });
+        //licenseButton.addEventListener("click", function(e){
+        //    window.location = "https://tldrlegal.com/license/mit-license";
+        //});
         
         dialogConfigStoreCheckbox.addEventListener("click", function(e){
             if (dialogConfigStoreCheckbox.checked){
