@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<!-- W3C recommends declaring the primary language -->
+<html lang="en">
+    <!-- Head element for backward compatability with HTML4 -->
+    <head>
+        <!-- ASCII and Standard Unicode Characters -->
+        <meta charset=utf-8 />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Mobile viewing enhancement -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+        <!-- Description should be roughly 155 characters, no double quotes, use keywords -->
+        <meta name="description" content="Firebase v3 methods from a graphical user interface (GUI) for learning and testing purposes." />
+        <!-- Format as Primary Keyword - Secondary Keyword | Brand Name, keep under 55 characters -->
+        <title>Firebase Sandbox</title>
+        <!-- Minimize the number of CSS files for performance -->
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,100,300,700italic,500,500italic,400italic,300italic,100italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.red-orange.min.css" />
+        <link rel="stylesheet" type="text/css" href="../firebase-sandbox/dialog-polyfill.css" />
+        <!--[if lt IE 9]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js">
+            </script>
+            <noscript>
+                <strong>Warning !</strong>
+                Because your browser does not support HTML5, some elements are created using JavaScript.
+                Unfortunately your browser has disabled scripting. Please enable it in order to display this page.
+            </noscript>
+        <![endif]-->
+        <style>
+            .page-content{
+                font-family: 'Roboto', sans-serif;
+            }
+            .intro-card > .mdl-card__title {
+                color: #fff;
+                min-height: 256px;
+                background: url('https://rack.pub/media/space.jpg');
+                background-position:center bottom;
+                background-size:cover;
+            }
+            .intro-card > .mdl-card__menu {
+                color: #fff;
+            }
+            .mdl-card__actions {
+                display: flex;
+                box-sizing:border-box;
+                align-items: center;
+            }
+                .mdl-card__actions > .mdl-button--icon {
+                margin-right: 3px;
+                margin-left: 3px;
+            }
+            .emphasis-color{
+                color:#757575;
+            }
+            .attention-color{
+                color:#616161;
+            }
+            .italics{
+                font-style:italic;
+            }
+            .headline{
+                font-weight:300;
+                font-size:20px;
+                line-height:120%;
+            }
+            .title{
+                font-weight:500;
+                font-size:1em;
+            }
+            .subheading{
+                font-weight:400;
+                font-size:16px;
+                line-height:120%;
+                margin-top:24px;
+            }
+            .display2{
+                font-weight:100;
+                font-size:32px;
+                line-height:120%;  
+            }
+            .credits{
+                font-weight:300;
+                color:#c53929;
+                margin:12px;
+            }
+            #license{
+                font-size:12px;
+            }
+            #rack{
+                font-size:16px;
+            }
+            #license:hover{
+                cursor:pointer;
+            }
+            #rack:hover{
+                cursor:pointer;
+            }
+
+            .aligned{
+                vertical-align: -15%;
+            }
+            .icon-conditioned-one{
+                font-size: 1.25em;
+                vertical-align: -15%;
+            }
+            .code{
+                background:#e0e0e0;
+                font-weight:300;
+                line-height:105%;
+                padding:2px;
+                color: #333333;
+                border-radius:2px;
+                font-family: ‘Courier New’, Courier, monospace;
+            }
+            .value-div{
+                vertical-align:text-bottom;
+            }
+            .align-right{
+                text-align:right;
+            }
+            .align-left{
+                float:left;
+                margin-right:12px;
+            }
+            .align-center{
+                text-align:center;
+            }
+            .section-one{
+                margin-top:-16px;
+            }
+            .hide{
+                display:none;
+            }
+            
+            #configured{
+                font-size:10px;
+                float:left;
+                margin-left:20px;
+                margin-top:8px;
+                margin-bottom:-12px;
+                color:#757575;
+            }
+            #configure-span{
+                float:right;
+            }
+            #dialog-config-checkbox-option{
+              position: absolute;
+              left: 24px;
+              bottom: 2px;                
+            }
+            #checkboxes-div{
+                margin-left:8px;
+            }
+            #dialog-config-top-icon, #dialog-help-top-icon{
+                position: absolute;
+                right: 16px;
+                top: 16px;
+            }
+            #top{
+                float:right;
+            }
+            #main-help:hover{
+                cursor:pointer;
+            }
+            #fork:hover{
+                cursor:pointer;
+            }            
+            #dialog-config, #dialog-help{
+              margin-left:auto;
+              margin-right:auto;
+              margin-top:0;
+            }
+            #dialog-help-menu{
+                border-left:4px solid black;
+                border-color:#fce8b2;
+                padding-left:12px;
+            }
+            #dialog-help-body{
+                margin-bottom:-24px;
+            }
+            .blockquote{
+                border-left:4px solid black;
+                border-color:#9e9e9e;
+                background: rgb(224, 224, 224); /* fallback color */
+                background: rgba(224, 224, 224, 0.5);
+                padding-left:12px;
+                margin-left:12px;
+                margin-right:12px;
+            }
+            .mdl-dialog {
+                border: none;
+                box-shadow: 0 9px 46px 8px rgba(0, 0, 0, 0.14), 0 11px 15px -7px rgba(0, 0, 0, 0.12), 0 24px 38px 3px rgba(0, 0, 0, 0.2);
+                width: 280px; 
+            }
+            .mdl-dialog__title {
+                padding: 0px 24px 0;
+                margin: 0;
+                font-size: 2.5rem; 
+            }
+            .mdl-dialog__actions {
+                padding: 8px 8px 8px 24px;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-direction: row-reverse;
+                -ms-flex-direction: row-reverse;
+                flex-direction: row-reverse;
+                -webkit-flex-wrap: wrap;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap; 
+            }
+            .mdl-dialog__actions > * {
+                margin-right: 8px;
+                height: 36px; 
+            }
+            .mdl-dialog__actions > *:first-child {
+                margin-right: 0; 
+            }
+            .mdl-dialog__actions--full-width {
+                padding: 0 0 8px 0; 
+            }
+            .mdl-dialog__actions--full-width > * {
+                height: 48px;
+                -webkit-flex: 0 0 100%;
+                -ms-flex: 0 0 100%;
+                flex: 0 0 100%;
+                padding-right: 16px;
+                margin-right: 0;
+                text-align: right; }
+                .mdl-dialog__content {
+                padding: 20px 24px 24px 24px;
+                color: rgba(0,0,0, 0.54); 
+            }
+            
+            
+.spin {
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 4000ms;
+    -webkit-animation-iteration-count: 3;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spin;
+    -moz-animation-duration: 4000ms;
+    -moz-animation-iteration-count: 3;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spin;
+    -ms-animation-duration: 4000ms;
+    -ms-animation-iteration-count: 3;
+    -ms-animation-timing-function: linear;
+    
+    animation-name: spin;
+    animation-duration: 4000ms;
+    animation-iteration-count: 3;
+    animation-timing-function: linear;
+}
+@-ms-keyframes spin {
+    from { -ms-transform: rotate(0deg); }
+    to { -ms-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}            
+            
+            
+            
+            
+            
+        </style>
+    </head>
+    <body>
+        <div class="mdl-layout mdl-js-layout">
+            <!--Main Page -->
+            <main class="mdl-layout__content page-content">
+                <!--Main Page Content Section -->
+                <section class="section-top mdl-grid">
+                    <div class="mdl-cell mdl-cell--4-col-phone mdl-cell--8-col-tablet mdl-cell--12-col-desktop align-right">
+                        <span id="fork">
+                            <i class="material-icons aligned">call_split</i>
+                        </span>
+                        <div class="mdl-tooltip mdl-tooltip--left" for="fork">
+                            Fork Your Own Copy
+                        </div>
+                        &nbsp;&nbsp;
+                        <span id="main-help">
+                            <i class="material-icons aligned">help_outline</i>
+                        </span>
+                        <div class="mdl-tooltip mdl-tooltip--left" for="main-help">
+                            Click for Help
+                        </div>
+                    </div> 
+                </section>
+                <section class="section-one mdl-grid">    
+                    <div class="mdl-layout-spacer"></div>
+                    <div class="intro-card mdl-card mdl-shadow--2dp mdl-cell mdl-cell--8-col-tablet mdl-cell--8-col-desktop"  id="intro-card">
+                        <div class="mdl-card__title">
+                            <span class="mdl-card__title-text mdl-color-text--grey-100 display2">Firebase v3 Sandbox</span>
+                        </div>
+                            <div id="configured">
+                                <i class="material-icons aligned">vpn_key</i><span class="title">API Key&#58; </span><span class="mdl-list__item-sub-title" id="api-key-span"></span><br>
+                                <i class="material-icons aligned">domain</i><span class="title">Auth Domain&#58; </span><span class="mdl-list__item-sub-title" id="auth-domain-span"></span><br>
+                                <i class="material-icons aligned">storage</i><span class="title">DB URL&#58; </span><span class="mdl-list__item-sub-title" id="database-url-span"></span>
+                            </div>                        
+                        <div class="mdl-card__supporting-text mdl-typography--headline">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--3-col">
+                                <input class="mdl-textfield__input" type="text" id="path-input">
+                                <label class="mdl-textfield__label" for="path-input">Path...</label>
+                            </div>
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--3-col">
+                                <input class="mdl-textfield__input" type="text" id="child-input">
+                                <label class="mdl-textfield__label" for="child-input">Child Node...</label>
+                            </div>
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--3-col">
+                                <input class="mdl-textfield__input" type="text" id="key-input">
+                                <label class="mdl-textfield__label" for="key-input">Key...</label>
+                            </div>
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--6-col-tablet mdl-cell--8-col-desktop" id="value-div">
+                                <textarea class="mdl-textfield__input" rows="3" id="value-input" ></textarea>
+                                <label class="mdl-textfield__label" for="value-input">Value...</label>
+                            </div>
+                            <div class="" id="checkboxes-div">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-no-value">
+                                    <input type="checkbox" id="checkbox-no-value" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">Value&#58; <span class="code">true</span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border intro-card-actions">
+                            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect action-button" id="button-push" disabled>
+                                Push
+                            </button>
+                            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect action-button" id="button-set" disabled>
+                                Set
+                            </button>
+                            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect action-button" id="button-transaction" disabled>
+                                Transaction
+                            </button>
+                            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect action-button" id="button-update" disabled>
+                                Update
+                            </button>
+                        </div>
+                        <div class="mdl-card__menu">
+                            <span id="configure-span">
+                                <button class="mdl-button mdl-js-button mdl-button--accent" id="configure">
+                                    <i class="material-icons" id="settings-icon">settings</i> Firebase Configuration
+                                </button>
+                            </span><br>
+                        </div>
+                    </div>
+                    <div class="mdl-layout-spacer"></div>
+                </section>
+                <section class="section-bottom mdl-grid">
+                    <div class="mdl-cell mdl-cell--4-col-phone mdl-cell--8-col-tablet mdl-cell--12-col-desktop align-center">
+                        <span  class="credits" id="rack">- Ron Royston</span><br>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <div id="toast" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button"></button>
+        </div>
+        <dialog id="dialog-config" class="mdl-dialog mdl-cell mdl-cell--4-col-phone mdl-cell--4-col-tablet mdl-cell--6-col-desktop">
+        	<h1 class="mdl-dialog__title mdl-color-text--red-600" id="dialog-config-title">Firebase Database Configuration</h1>
+            <a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="dialog-config-top-icon" href="https://firebase.google.com/docs/web/setup#prerequisites" target="_blank">
+                <i class="material-icons mdl-color-text--orange-600">help_outline</i>
+            </a>
+        	<div class="mdl-dialog__content" id="dialog-config-content">
+                <div class="mdl-spinner mdl-js-spinner is-active hide" id="dialog-config-processing"></div>
+        	    <div id="dialog-config-body">
+                    <div class="mdl-textfield mdl-js-textfield dialog-inputs mdl-textfield--floating-label mdl-cell mdl-cell--4-col">
+                        <input class="mdl-textfield__input" type="text" id="apiKey-input">
+                        <label class="mdl-textfield__label" for="apiKey-input">API Key...</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield dialog-inputs mdl-textfield--floating-label mdl-cell mdl-cell--4-col">
+                        <input class="mdl-textfield__input" type="text" id="authDomain-input">
+                        <label class="mdl-textfield__label" for="authDomain-input">Auth Domain...</label>
+                    </div>
+                    <br>
+                    <div class="mdl-textfield mdl-js-textfield dialog-inputs mdl-textfield--floating-label mdl-cell mdl-cell--4-col">
+                        <input class="mdl-textfield__input" type="text" id="databaseURL-input">
+                        <label class="mdl-textfield__label" for="databaseURL-input">Database URL...</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield dialog-inputs mdl-textfield--floating-label mdl-cell mdl-cell--4-col">
+                        <input class="mdl-textfield__input" type="text" id="storageBucket-input">
+                        <label class="mdl-textfield__label" for="storageBucket-input">Storage Bucket...</label>
+                    </div>
+                </div>
+        	</div>
+        	<hr>
+        	<div class="mdl-dialog__actions" id="dialog-config-actions">
+                <span id="dialog-config-checkbox-option">
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="dialog-config-store-checkbox">
+                        <input type="checkbox" id="dialog-config-store-checkbox" class="mdl-checkbox__input" checked>
+                        <span class="mdl-checkbox__label">Remember Data</span>
+                    </label>
+                </span>
+                <span class="align-right">
+                	<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="dialog-config-close">
+                	    Exit
+                	</button>
+                	&nbsp;
+                	<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" id="dialog-config-button-commit" disabled>
+                	    Commit
+                	</button>
+            	</span>
+        	</div>
+        </dialog>
+        
+        <dialog id="dialog-help" class="mdl-dialog mdl-cell mdl-cell--4-col-phone mdl-cell--4-col-tablet mdl-cell--6-col-desktop">
+        	<h1 class="mdl-dialog__title mdl-color-text--red-600" id="dialog-help-title">Firebase Sandbox Help</h1>
+            <button class="mdl-button mdl-js-button mdl-button--icon" id="dialog-help-top-icon">
+                <i class="material-icons">close</i>
+            </button>
+        	<div class="mdl-dialog__content" id="dialog-help-content">
+        	    <div id="dialog-help-body">
+        	        <div id="dialog-help-menu">
+            	        <a href="#dialog-help-intro">Introduction</a><br>
+            	        <a href="#dialog-help-setup">Setup</a><br>
+            	        <a href="#dialog-help-use">Use</a><br>
+            	        <a href="#dialog-help-troubleshooting">Troubleshooting</a><br>
+            	        <a href="#dialog-help-about">About</a><br>
+            	        <a href="#dialog-help-license">License</a>
+        	        </div>
+        	        <div id="dialog-help-intro">
+        	            <h4>Introduction</h4>
+        	            <p>This web application enables developers to trigger Firebase v3 methods from a graphical user interface &#40;GUI&#41; for learning and testing purposes.  Currently, database write methods are supported.  Check back soon for more features and methods support.</p>
+        	            <p class="blockquote"><i class="material-icons icon-conditioned-one">info_outline</i> This web application is a front-end only.  You will be interacting with <span class="attention-color italics">your</span> Firebase database on the back end.</p>
+        	        </div>	        
+        	        <div id="dialog-help-setup">
+        	            <h4>Setup</h4>
+        	            <p>Begin by <a href="https://firebase.google.com/">creating a Firebase app</a> compliments of Google &#40;no cost&#41;.  Firebase will provide you configuration parameters to setup your <span class="attention-color">web app</span>.</p>
+        	            <p>Enter your Firebase web app configuration parameters here by clicking the Firebase Configuration button located at the top right of the card on this page.  Once you commit your configuration, this web app is linked only to your Firebase backend.</p>
+        	        </div>
+        	        <div id="dialog-help-use">
+        	            <h4>Use</h4>
+        	            <p>Open your Firebase Realtime Database viewer on console.firebase.google.com in a separate window so you can view the results of your actions.</p>
+        	            <p>Using this web app, enter data and fire methods by clicking their respective buttons.  Build up your database, tear it down, build it again.  Test firebase Security Rules.  It's a sandbox.  Have fun!</p>
+        	            <p class="blockquote"><i class="material-icons icon-conditioned-one">info_outline</i> Transaction methods require functions as an argument.  You may need to use your web browser console to experiment with transactions.</p>
+        	        </div>
+        	        <div id="dialog-help-troubleshooting">
+        	            <h4>Troubleshooting</h4>
+        	            <p>Ensure that your configuration parameters are entered exactly as provided by Firebase, commit them, then reload the web page.  If problems persist please <a href="https://github.com/rhroyston/firebase-sandbox/issues">submit an issue</a>.</p>
+        	        </div>
+        	        <div id="dialog-help-about">
+        	            <h4>About</h4>
+        	            <p>firebase-sandbox version.06-2016 Created by Ron Royston, https://rack.pub</p>
+        	        </div>
+        	        <div id="dialog-help-license">
+        	            <h4>License</h4>
+        	            <p>Copyright &#169; 2016 Ron Royston, <a href="https://rack.pub">https:rack.pub</a> &#124; Released Under the <a href="https://tldrlegal.com/license/mit-license">MIT License</a></p>
+        	            <p class="italics">Third-party trademarks mentioned are the property of their respective owners.</p>
+        	        </div>
+                </div>
+        	</div>
+        	<hr>
+        	<div class="mdl-dialog__actions" id="dialog-help-actions">
+                <span class="align-right">
+                	<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="dialog-help-close">
+                	    Exit
+                	</button>
+            	</span>
+        	</div> 
+        </dialog>
+        <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+        <!-- commented out for testing script error catching -->
+        <!-- <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script> -->
+		<script src="../firebase-sandbox/firebase.js"></script>
+		<script>
+            //Revealing Module Pattern (Public & Private) w Public Namespace 'fireConfig'
+            var fireConfig = (function() {
+                // object to expose as public properties and methods
+                var pub = {};
+
+                pub.configured = false;
+                pub.isStored = false;
+                pub.initialized = false;
+                
+                // from session storage
+                pub.sessionStorageConfig = function(){
+                    //try loading config from session storage
+                    try {
+                        pub.sessionApiKey = sessionStorage.getItem("firebaseSandboxApiKey");
+                        pub.sessionAuthDomain = sessionStorage.getItem("firebaseSandboxAuthDomain");
+                        pub.sessionDatabaseURL = sessionStorage.getItem("firebaseSandboxDatabaseURL");
+                        pub.sessionStorageBucket = sessionStorage.getItem("firebaseSandboxStorageBucket");
+                        if(pub.sessionApiKey && pub.sessionAuthDomain && pub.sessionDatabaseURL && pub.sessionStorageBucket){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } catch(e) {
+                        console.log(e);
+                        return false;
+                    }
+                };
+                
+                //from local storage
+                pub.localStorageConfig = function(){
+                    //try loading config from session storage
+                    try{
+                        pub.storedApiKey = localStorage.getItem("firebaseSandboxApiKey");
+                        pub.storedAuthDomain = localStorage.getItem("firebaseSandboxAuthDomain");
+                        pub.storedDatabaseURL = localStorage.getItem("firebaseSandboxDatabaseURL");
+                        pub.storedStorageBucket = localStorage.getItem("firebaseSandboxStorageBucket");
+                        if(pub.storedApiKey && pub.storedAuthDomain && pub.storedDatabaseURL && pub.storedStorageBucket){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } catch (e){
+                        console.log(e);
+                        return false;
+                    }
+                };
+                
+                pub.sessionStorageConfig();
+                pub.localStorageConfig();                
+                
+                pub.config = {
+                	apiKey: pub.apiKey,
+                	authDomain: pub.authDomain,
+                	databaseURL: pub.databaseURL,
+                	storageBucket: pub.storageBucket,
+                };
+
+                //API
+                return pub;
+            }());
+		</script>
+		<script src="../firebase-sandbox/dialog-polyfill.js"></script>
+		<script src="../firebase-sandbox/script.js"></script>
+    </body>
+</html>
