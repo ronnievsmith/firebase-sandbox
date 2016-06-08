@@ -313,7 +313,6 @@ var fire = (function() {
                 localStorage.setItem("firebaseSandboxAuthDomain",auth);
                 localStorage.setItem("firebaseSandboxDatabaseURL",db);
                 localStorage.setItem("firebaseSandboxStorageBucket",st);
-                console.log('loaded to local storage');
                 return true;
             } catch (e) {
                 pub.toast(JSON.stringify(e),null,4000);
