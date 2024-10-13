@@ -1,4 +1,4 @@
-# [Firebase Sandbox](http://rack.pub/firebase-sandbox)
+# Firebase Sandbox
 ### Synopsis
 
 A web application enabling developers to trigger Firebase v3 methods from a graphical user interface (GUI) for learning and testing purposes. Currently, database write methods are supported. Check back soon for more features and methods support.
@@ -7,9 +7,7 @@ A web application enabling developers to trigger Firebase v3 methods from a grap
 
 ### Code Example
 
-https://rack.pub/firebase-sandbox
-
-<img src="https://github.com/rhroyston/rhroyston.github.io/blob/master/firebase-sandbox.jpg" alt="screenshot">
+<img src="https://ronnievsmith.com/media/firebase-sandbox.jpg" alt="screenshot">
 
 ### Motivation
 
@@ -17,7 +15,7 @@ This web application allows developers to easily perform and see the effects of 
 
 ### Installation
 
-1. Navigate to https://rack.pub/firebase-sandbox
+1. Navigate to https://yoursite/firebase-sandbox
 2. Enter your Firebase config parameters by clicking the Firebase Configuration button
 3. Press the buttons and enjoy yourself
 
@@ -25,8 +23,8 @@ This web application allows developers to easily perform and see the effects of 
 
 ### Contribute
 
-If you found a bug, have any questions or want to contribute please let me know, [ron@rack.pub](mailto:ron@rack.pub).
+If you found a bug, have any questions or want to contribute please let me know.
 
 ### License
 
-Ron Royston, [https://rack.pub](https://rack.pub), [MIT License](https://en.wikipedia.org/wiki/MIT_License)
+Ronnie Smith, [https://ronnievsmith.com](https://ronnievsmith.com), [MIT License](https://en.wikipedia.org/wiki/MIT_License)
